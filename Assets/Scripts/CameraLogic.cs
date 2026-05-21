@@ -1,21 +1,16 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class CameraLogic : MonoBehaviour
 {
     public Transform player;
-    public Vector3 offset;
-    public float smoothSpeed = 0.125f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        GameObject camera = GameObject.Find("Main Camera");
-    }
+    public Vector3   offset      = new Vector3(0f, 8f, -2f);
+    public float     smoothSpeed = 0.1f;
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        offset = new Vector3(1, 0.8f, -1.2f);
-        Vector3 desiredPosition = player.position + offset;
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+        if (player == null) return;
+        Vector3 desired = player.position + offset;
+        transform.position = Vector3.Lerp(transform.position, desired, smoothSpeed);
+        transform.LookAt(player.position + Vector3.up);
     }
 }
