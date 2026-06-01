@@ -54,12 +54,18 @@ public class PlayerController : MonoBehaviour
         if (kb == null) return;
 
         float h = 0f, v = 0f;
-        if (kb.wKey.isPressed || kb.upArrowKey.isPressed)    v += 1f;
-        if (kb.sKey.isPressed || kb.downArrowKey.isPressed)  v -= 1f;
-        if (kb.aKey.isPressed || kb.leftArrowKey.isPressed)  h -= 1f;
-        if (kb.dKey.isPressed || kb.rightArrowKey.isPressed) h += 1f;
+        if (kb.wKey.isPressed) v += 1f;
+        if (kb.sKey.isPressed) v -= 1f;
+        if (kb.aKey.isPressed) h -= 1f;
+        if (kb.dKey.isPressed) h += 1f;
 
-        Vector3 dir = new Vector3(h, 0f, v);
+        Camera cam = Camera.main;
+        Vector3 forward = cam != null ? cam.transform.forward : Vector3.forward;
+        Vector3 right   = cam != null ? cam.transform.right   : Vector3.right;
+        forward.y = 0f; forward.Normalize();
+        right.y   = 0f; right.Normalize();
+
+        Vector3 dir = forward * v + right * h;
         if (dir.sqrMagnitude > 1f) dir.Normalize();
         cc.Move(dir * moveSpeed * Time.deltaTime);
 

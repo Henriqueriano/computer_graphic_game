@@ -6,23 +6,32 @@ public class CameraLogic : MonoBehaviour
     public Transform player;
 
     [Header("Distancia e Sensibilidade")]
-    public float distance         = 3.5f;
+    public float distance         = 7f;
     public float mouseSensitivity = 0.2f;
+    public float arrowRotateSpeed = 120f;
 
     [Header("Limite Vertical (graus)")]
     [Tooltip("Angulo minimo — camera quase no nivel do chao")]
-    public float minPitch =  8f;
-    [Tooltip("Angulo maximo — camera abaixo do topo das paredes (3 m)")]
-    public float maxPitch = 28f;
+    public float minPitch = 15f;
+    [Tooltip("Angulo maximo — camera acima das paredes")]
+    public float maxPitch = 40f;
 
     private float yaw   = 180f; // comeca atras do player
-    private float pitch =  18f;
+    private float pitch =  25f;
 
     void LateUpdate()
     {
         if (player == null) return;
 
-        // Botao direito do mouse: girar camera
+        // Setas esquerda/direita: girar camera horizontalmente
+        Keyboard kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.leftArrowKey.isPressed)  yaw -= arrowRotateSpeed * Time.deltaTime;
+            if (kb.rightArrowKey.isPressed) yaw += arrowRotateSpeed * Time.deltaTime;
+        }
+
+        // Botao direito do mouse: girar camera livremente
         Mouse mouse = Mouse.current;
         if (mouse != null && mouse.rightButton.isPressed)
         {
