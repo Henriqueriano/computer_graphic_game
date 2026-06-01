@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
         if (kb.wKey.isPressed || kb.upArrowKey.isPressed)    v += 1f;
         if (kb.sKey.isPressed || kb.downArrowKey.isPressed)  v -= 1f;
         if (kb.aKey.isPressed || kb.leftArrowKey.isPressed)  h -= 1f;
-        if (kb.dKey.isPressed || kb.rightArrowKey.isPressed || kb.digit0Key.isPressed || kb.numpad0Key.isPressed) h += 1f;
+        if (kb.dKey.isPressed || kb.rightArrowKey.isPressed) h += 1f;
 
         Vector3 dir = new Vector3(h, 0f, v);
         if (dir.sqrMagnitude > 1f) dir.Normalize();
@@ -71,9 +71,9 @@ public class PlayerController : MonoBehaviour
 
     void CheckDistanceRules()
     {
-        // Check from the capsule's geometric center (not the pivot at the feet)
         Vector3 checkPos = transform.position + cc.center;
-
+        
+        // Valida a colizao do jogador com as paredes e obstaculos
         if (IsNearType(checkPos, MazeObjectType.Wall,     wallMinDistance)     ||
             IsNearType(checkPos, MazeObjectType.Obstacle, obstacleMinDistance))
         {

@@ -41,7 +41,7 @@ Clique no botão **▶ Play** na parte superior do Editor. O labirinto é gerado
 | `W` / `↑` | Mover para frente |
 | `S` / `↓` | Mover para trás |
 | `A` / `←` | Mover para a esquerda |
-| `D` / `→` / `0` | Mover para a direita |
+| `D` / `→` | Mover para a direita |
 
 o zero é porque meu telcado ezta com a zetinha quebrada!
 
@@ -67,3 +67,10 @@ o zero é porque meu telcado ezta com a zetinha quebrada!
 | Input System | 1.19.0 |
 | AI Navigation (NavMesh) | 2.0.12 |
 | ProBuilder | 6.0.9 |
+
+
+# Occlusion Culling
+
+Para aplicar a oclusão os objetos da cena precisam ser estáticos, portanto, não pode ser gerados em tempo de execução porque não será possível fazer o bake, foi ajustar o o script MazeGenerator.cs oara dar uma nova opção ao ContextMenu, que gera os objetos da cena antes de rodar e com isso é possível fazer o bake.
+
+Clique no objeto que está com o Script do MazeGenerator.cs, clique nos três pontinhos (⋮) do script do inspecionar, e clique na opção/método "Gerar Labirinto", com isso basta fazer o bake seguindo os passo: Window -> Rendering ->  Occlusion Culling -> Bake.

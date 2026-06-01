@@ -40,14 +40,26 @@ public class MazeGenerator : MonoBehaviour
         if (GameManager.Instance == null)
             gameObject.AddComponent<GameManager>();
 
+        if (transform.childCount == 0)
+            GenerateGeometry();
+
+        BakeNavMesh();      // bake BEFORE obstacles/player exist
+        PlaceObstacles();
+        SpawnPlayer();
+    }
+
+    [ContextMenu("Gerar Labirinto")]
+    public void GenerateGeometry()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+            DestroyImmediate(transform.GetChild(i).gameObject);
+
+        cellCenters.Clear();
         InitWalls();
         CarveMaze();
         BuildMaze();
-        BakeNavMesh();      // bake BEFORE obstacles/player exist
         PlaceEntrance();
         PlaceExit();
-        PlaceObstacles();
-        SpawnPlayer();
     }
 
     // ─── Maze Generation (iterative DFS) ───────────────────────────────────────
@@ -234,9 +246,11 @@ public class MazeGenerator : MonoBehaviour
         Shuffle(available);
         int idx = 0;
 
+        // Obstaculos fixos com NavMeshObstacle
         for (int i = 0; i < fixedObstacleCount  && idx < available.Count; i++, idx++)
             SpawnFixedObstacle(available[idx], fixedMat);
 
+        // Obstaculos moveis com NavMeshObstacle
         for (int i = 0; i < mobileObstacleCount && idx < available.Count; i++, idx++)
             SpawnMobileObstacle(available[idx], mobileMat);
     }
