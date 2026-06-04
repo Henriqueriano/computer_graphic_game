@@ -41,11 +41,41 @@ public class MazeGenerator : MonoBehaviour
             gameObject.AddComponent<GameManager>();
 
         if (transform.childCount == 0)
+        {
             GenerateGeometry();
+        }
+        else
+        {
+            PopulateCellCenters();
+            RecreateExitTrigger();
+        }
 
         BakeNavMesh();      // bake BEFORE obstacles/player exist
         PlaceObstacles();
         SpawnPlayer();
+    }
+
+    void PopulateCellCenters()
+    {
+        cellCenters.Clear();
+        for (int r = 0; r < height; r++)
+            for (int c = 0; c < width; c++)
+                cellCenters.Add(CellCenter(r, c));
+    }
+
+    void RecreateExitTrigger()
+    {
+        var existing = GameObject.Find("ExitTrigger");
+        if (existing != null) Destroy(existing);
+
+        Vector3 ec = CellCenter(height - 1, width - 1);
+        var triggerGO = new GameObject("ExitTrigger");
+        triggerGO.transform.position = new Vector3(ec.x, 1f, ec.z);
+        var bc = triggerGO.AddComponent<BoxCollider>();
+        bc.isTrigger = true;
+        bc.size = new Vector3(cellSize * 0.85f, 2.5f, cellSize * 0.85f);
+        triggerGO.AddComponent<MarkerComponent>().objectType = MazeObjectType.Exit;
+        exitTriggerTransform = triggerGO.transform;
     }
 
     [ContextMenu("Gerar Labirinto")]
@@ -132,7 +162,7 @@ public class MazeGenerator : MonoBehaviour
 
     Vector3 CellCenter(int row, int col)
         => new Vector3(col * cellSize + cellSize * 0.5f, 0f, row * cellSize + cellSize * 0.5f);
-
+    
     // ─── Physical Construction ──────────────────────────────────────────────────
 
     void BuildMaze()
