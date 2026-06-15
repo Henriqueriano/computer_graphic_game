@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using UnityEditor.Overlays;
+using System.Runtime.CompilerServices;
+
+enum MazeComponentType { Wall, Obstacle, Floor }
 
 /// <summary>
 /// Entry point: attach to an empty GameObject in a blank scene and press Play.
@@ -14,6 +18,13 @@ public class MazeGenerator : MonoBehaviour
     public int width  = 7;
     public int height = 7;
     public float cellSize = 5f;
+
+    [Header("Component Textures")]
+    public Texture2D wallTexture;
+    public Texture2D obstacleTexture;
+    public Texture2D floorTexture;
+    // Idc for player texture.
+
 
     [Header("Walls")]
     public float wallHeight    = 3f;
@@ -164,11 +175,10 @@ public class MazeGenerator : MonoBehaviour
         => new Vector3(col * cellSize + cellSize * 0.5f, 0f, row * cellSize + cellSize * 0.5f);
     
     // ─── Physical Construction ──────────────────────────────────────────────────
-
     void BuildMaze()
     {
-        Material wallMat  = CreateMat(new Color(0.38f, 0.38f, 0.42f));
-        Material floorMat = CreateMat(new Color(0.58f, 0.50f, 0.38f));
+        Material wallMat  = CreateMat(MazeComponentType.Wall);
+        Material floorMat = CreateMat(MazeComponentType.Floor);
 
         // Floor tiles
         for (int r = 0; r < height; r++)
@@ -366,6 +376,7 @@ public class MazeGenerator : MonoBehaviour
 
         var logic = cam.gameObject.GetComponent<CameraLogic>()
                     ?? cam.gameObject.AddComponent<CameraLogic>();
+        logic.distance = 0f;
         logic.player = playerTransform;
     }
 
@@ -386,6 +397,30 @@ public class MazeGenerator : MonoBehaviour
         mat.color = color;
         return mat;
     }
+
+    Material CreateMat(MazeComponentType component)
+    {
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        if (component == MazeComponentType.Wall)
+        {
+            ColorUtility.TryParseHtmlString("#737474", out Color grayFromHex);
+            mat.SetTexture("_BaseMap", wallTexture);
+            mat.color = grayFromHex;
+        }
+        else if (component == MazeComponentType.Obstacle)
+        {
+            ColorUtility.TryParseHtmlString("#FF0000", out Color redFromHex);
+            mat.SetTexture("_BaseMap", obstacleTexture);
+            mat.color = redFromHex;
+        }
+        else if (component == MazeComponentType.Floor)
+        {
+            mat.SetTexture("_BaseMap", floorTexture);
+        }
+        return mat;
+    }
+
+
 
     static void Shuffle<T>(List<T> list)
     {
